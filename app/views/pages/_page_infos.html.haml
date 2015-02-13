@@ -1,0 +1,7 @@
+%tr
+  %td
+    %a{:href => page}
+      %img{:src => page.picture}/
+  %td
+    %h5= link_to page.name, page
+  %td= link_to content_tag(:i, "", class: "icon-trash icon-white") + "X", page, method: :delete, class: "btn btn-danger remove_fields"

@@ -1,1 +1,5 @@
-Facebook PAge Fetcher
+Facebook Page Fetcher
+
+Development of tool to enable you to recover the last 10 posts of a Facebook page
+
+https://fbpage-fetcher.herokuapp.com/

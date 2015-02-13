@@ -1,0 +1,9 @@
+#notice
+  - flash.each do |name, msg| 
+    .alert.alert-danger=msg
+
+= render 'form'
+
+%table.table.table-condensed.js-table_fbpage
+  - @pages.each do |page|
+    =render partial: 'page_infos', locals: { page: page }

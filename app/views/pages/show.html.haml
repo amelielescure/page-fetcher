@@ -1,0 +1,21 @@
+%p#notice= notice
+%h2
+  %img{:src => @page.picture}/
+  = @page.name
+  .pull-right.fb-like{"data-action" => "like", "data-href" => "https://www.facebook.com/#{@page.page_id}", "data-layout" => "standard", "data-share" => "false", "data-show-faces" => "true"}
+- @feeds.each do |feed|
+  .panel.panel-default
+    .panel-heading
+      %p.pull-right= Date.parse(feed["created_time"]).strftime("le %d/%m/%Y")
+      %h4= feed["from"]["name"]
+    .panel-body
+      %p= feed["message"]
+      .clearfix
+      %hr/
+      .col-lg-2
+        %a{:href => feed["link"], :target => "_blank"}
+          %img{:src => feed["picture"]}/
+      .col-lg-9
+        %a{:href => feed["link"], :target => "_blank"}
+          %h5= feed["name"]
+          %p= feed["description"]

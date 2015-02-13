@@ -1,52 +1,49 @@
 class PagesController < ApplicationController
-  before_action :set_page, only: [:show, :edit, :update, :destroy]
+  before_action :set_page, only: [:show, :destroy]
 
-  # GET /pages
-  # GET /pages.json
-  def index
-    @pages = Page.all
-  end
+  before_filter :init_fb_graph_api
 
   # GET /pages/1
   # GET /pages/1.json
   def show
+    begin
+      @feeds = @graph.get_connections( @page.page_id.to_i, "feed?limit=10")
+    rescue Koala::Facebook::ClientError => exc
+      redirect_to root_url, notice: "Nous avons rencontre un probleme, veuillez reessayer."
+    end
   end
 
   # GET /pages/new
   def new
     @page = Page.new
+    @pages = Page.all
   end
 
-  # GET /pages/1/edit
-  def edit
-  end
 
   # POST /pages
   # POST /pages.json
   def create
-    @page = Page.new(page_params)
-
-    respond_to do |format|
-      if @page.save
-        format.html { redirect_to @page, notice: 'Page was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @page }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @page.errors, status: :unprocessable_entity }
-      end
+    begin
+      fbpage = @graph.get_object(params['page']['page_id'].to_i)
+      picture = @graph.get_picture(params['page']['page_id'].to_i)
+    rescue Koala::Facebook::ClientError => exc
+      error = true
+      redirect_to root_url
     end
-  end
 
-  # PATCH/PUT /pages/1
-  # PATCH/PUT /pages/1.json
-  def update
-    respond_to do |format|
-      if @page.update(page_params)
-        format.html { redirect_to @page, notice: 'Page was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: 'edit' }
-        format.json { render json: @page.errors, status: :unprocessable_entity }
+    unless error
+      params["page"]["name"] = fbpage['name']
+      params["page"]["picture"] = picture
+      @page = Page.new(page_params)
+
+      respond_to do |format|
+        if @page.save
+          format.js   { }
+          format.json { render json: @page, status: :created, location: @page }
+        else
+          format.html { render action: "new" }
+          format.json { render json: @page.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -56,7 +53,7 @@ class PagesController < ApplicationController
   def destroy
     @page.destroy
     respond_to do |format|
-      format.html { redirect_to pages_url }
+      format.html { redirect_to root_url }
       format.json { head :no_content }
     end
   end
@@ -69,6 +66,6 @@ class PagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def page_params
-      params.require(:page).permit(:page_id)
+      params.require(:page).permit(:page_id, :name, :picture)
     end
 end

@@ -1,0 +1,17 @@
+= form_tag(@page, :remote => true, :class => "pages_form") do |f|
+  - if @page.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(@page.errors.count, "error")
+        prohibited this page from being saved:
+      %ul
+        - @page.errors.full_messages.each do |msg|
+          %li= msg
+  .row
+    .well
+      %form.form
+        %h4 Renseignez l'ID de votre page Facebook
+        .input-group.text-center
+          %input.form-control.input-lg#page_page_id{:name => "page[page_id]", :placeholder => "(exemple: 188091757763​)", :type => "text"}
+          %span.input-group-btn
+            %input.js-submit-form.btn.btn-lg.btn-primary{:type => 'submit', :value => 'Ajouter'}
