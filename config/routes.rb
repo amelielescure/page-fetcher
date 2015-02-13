@@ -1,4 +1,6 @@
 PageFetcher::Application.routes.draw do
+  root 'pages#new'
+
   resources :pages
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -41,7 +43,7 @@ PageFetcher::Application.routes.draw do
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'
